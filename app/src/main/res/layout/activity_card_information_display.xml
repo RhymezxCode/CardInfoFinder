@@ -225,7 +225,7 @@
             android:fontFamily="@font/roboto_regular"
             android:text="@string/mainmenu"
             android:textAllCaps="true"
-            android:textColor="@color/design_default_color_background"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"

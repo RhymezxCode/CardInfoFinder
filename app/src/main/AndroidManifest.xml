@@ -34,23 +34,19 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
         tools:targetApi="31">
-        <meta-data
-            android:name="com.google.android.gms.vision.DEPENDENCIES"
-            android:value="ocr" />
-
         <activity
             android:name=".ui.CardOcrConfirm"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:theme="@style/Theme.CardInfoFinder" />
         <activity
             android:name=".ui.CardProcessor"
             android:exported="true"
+            android:theme="@style/Theme.CardInfoFinder"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".ui.CardOptionSelection"
             android:exported="true"
-            android:theme="@style/Theme.App.Starting"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:theme="@style/Theme.CardInfoFinder">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -61,7 +57,7 @@
         <activity
             android:name=".ui.CardInformationDisplay"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:theme="@style/Theme.CardInfoFinder" />
     </application>
 
 </manifest>
