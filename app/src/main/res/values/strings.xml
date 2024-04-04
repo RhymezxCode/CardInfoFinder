@@ -1,3 +1,32 @@
 <resources>
-    <string name="app_name">CardInfoFinder</string>
+    <string name="app_name">Card Information Finder</string>
+    <string name="card_information_finder">Card Information Finder</string>
+    <string name="enter_your_card_number">Enter your card number</string>
+    <string name="scan_your_card_number">Scan your card number Using OCR</string>
+    <string name="card">card</string>
+    <string name="back">back</string>
+    <string name="check_out">Check out</string>
+    <string name="proceed">Proceed</string>
+    <string name="method_of_entry">Method of Entry</string>
+    <string name="or">Or</string>
+    <string name="card_information">Card Information</string>
+    <string name="card_brand">Card brand :</string>
+    <string name="Null">null</string>
+    <string name="card_type">Card type :</string>
+    <string name="bank">Bank :</string>
+    <string name="country">Country :</string>
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Ocr dependencies cannot be downloaded due to low device storage</string>
+    <string name="title_activity_main">Ocr Detector Sample</string>
+    <string name="ocr_header">Click &quot;Detect Text&quot; to detect text</string>
+    <string name="read_text">Detect Text</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="ocr_success">Text read successfully</string>
+    <string name="ocr_failure">No text captured</string>
+    <string name="ocr_error">"Error reading text: %1$s"</string>
+    <string name="mainmenu">Mainmenu</string>
+    <string name="please_wait">Please Wait!!!</string>
 </resources>

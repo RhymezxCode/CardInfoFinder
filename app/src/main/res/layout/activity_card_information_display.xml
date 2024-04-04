@@ -97,7 +97,7 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/Null"
@@ -132,14 +132,13 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:maxLines="2"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/Null"
                     android:textAlignment="viewStart"
-                    tools:ignore="RtlCompat"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="RtlCompat" />
             </TableRow>
 
             <TableRow
@@ -168,14 +167,14 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/Null"
                     android:textAlignment="viewStart"
-                    tools:ignore="RtlCompat"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="RtlCompat" />
             </TableRow>
 
             <TableRow
@@ -203,14 +202,14 @@
                     android:ellipsize="end"
                     android:fontFamily="@font/roboto_regular"
                     android:gravity="center"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@string/Null"
                     android:textAlignment="viewStart"
-                    tools:ignore="RtlCompat"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    tools:ignore="RtlCompat" />
             </TableRow>
 
         </TableLayout>

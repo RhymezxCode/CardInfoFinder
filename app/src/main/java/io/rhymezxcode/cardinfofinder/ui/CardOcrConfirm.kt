@@ -43,9 +43,9 @@ class CardOcrConfirm : BaseActivity<ActivityOcrConfirmBinding>(), View.OnClickLi
         val bundle = intent.extras
 
         if (bundle != null)
-            binding?.card?.text = bundle.getString("cardNumber")
+            binding?.card?.setText(bundle.getString("cardNumber"))
 
-        cardNumber = bundle?.getString("cardNumber").toString()
+        cardNumber = binding?.card?.text.toString()
             .replace(" ", "").trim()
 
         binding?.back?.setOnClickListener(this)

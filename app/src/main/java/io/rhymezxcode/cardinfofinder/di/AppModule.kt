@@ -67,7 +67,6 @@ object AppModule {
         .build()
         .create(CardInfoFinderApiList::class.java)
 
-    //TODO: Observe the network state
     @Provides
     fun provideNetworkStateObserver(
         activity: Activity
