@@ -61,8 +61,9 @@ Defines data models used within the application.
 CardBankInfo.kt: Model for card bank information.
 CardCountryInfo.kt: Model for card country information.
 CardInfoPage.kt: Model for card information page.
-providers
-Contains classes responsible for providing data, both locally and remotely.
+
+### providers
+should contains classes responsible for providing data, both locally and remotely.
 
 ### remote:
 Handles remote data retrieval and authentication.
