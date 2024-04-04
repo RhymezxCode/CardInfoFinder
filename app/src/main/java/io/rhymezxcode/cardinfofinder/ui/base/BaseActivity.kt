@@ -7,14 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
-import dagger.hilt.android.AndroidEntryPoint
 import io.github.rhymezxcode.networkstateobserver.network.NetworkStateObserver
 import io.rhymezxcode.cardinfofinder.util.NetworkManager
 import io.rhymezxcode.cardinfofinder.util.configureBackPress
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@AndroidEntryPoint
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     @Inject

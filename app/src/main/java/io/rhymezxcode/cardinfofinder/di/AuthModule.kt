@@ -1,12 +1,12 @@
 package io.rhymezxcode.cardinfofinder.di
 
-import android.app.Activity
+import android.content.Context
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
-import io.github.rhymezxcode.networkstateobserver.network.NetworkStateObserver
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import io.rhymezxcode.cardinfofinder.data.providers.Url
 import io.rhymezxcode.cardinfofinder.data.providers.remote.AuthInterceptor
 import io.rhymezxcode.cardinfofinder.data.providers.remote.CardInfoFinderApiList
@@ -21,8 +21,8 @@ import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityComponent::class)
-object AppModule {
+@InstallIn(SingletonComponent::class)
+object AuthModule {
 
     @Provides
     @Singleton
@@ -40,6 +40,11 @@ object AppModule {
                 .disableHtmlEscaping()
                 .create()
         )
+
+    @Provides
+    fun provideAuth(
+        @ApplicationContext context: Context,
+    ) = AuthInterceptor(context)
 
     @Provides
     @Singleton
@@ -66,21 +71,6 @@ object AppModule {
         .client(okHttpClient)
         .build()
         .create(CardInfoFinderApiList::class.java)
-
-    @Provides
-    fun provideNetworkStateObserver(
-        activity: Activity
-    ): NetworkStateObserver {
-        return NetworkStateObserver.Builder()
-            .activity(activity = activity)
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideAuthInterceptor(
-        activity: Activity
-    ) = AuthInterceptor(activity)
 
     @Provides
     @Singleton

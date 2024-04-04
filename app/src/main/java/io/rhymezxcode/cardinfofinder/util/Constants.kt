@@ -19,6 +19,8 @@ object Constants {
     const val TOO_MANY_REQUEST_MESSAGE = "Too Many Request!"
     const val BAD_REQUEST_MESSAGE = "Bad Request!"
     const val FETCHED_MESSAGE = "Fetched Successfully!"
+    const val NULL_RESPONSE = "Response body is null"
+    const val SOMETHING_IS_WRONG = "Something went wrong!"
 
     //network messages
     const val NO_INTERNET_CONNECTION_MESSAGE = "No Internet Connection!"
@@ -26,4 +28,5 @@ object Constants {
     const val NETWORK_UNAVAILABLE_MESSAGE = "Network is unavailable!"
     const val LOSING_NETWORK_MESSAGE = "You are losing your network!"
     const val NETWORK_LOST_MESSAGE = "Network is lost!"
+    const val NETWORK_FAILURE = "Network Failure"
 }

@@ -29,7 +29,7 @@ object NetworkManager {
                         when {
                             Reachability.hasServerConnectedFlow(
                                 context = context,
-                                serverUrl = Url.BASE_URL
+                                serverUrl = Url.TEST_NETWORK_URL
                             ).retryWhen { cause, attempt ->
                                 if (cause is IOException && attempt < 3) {
                                     delay(2000)

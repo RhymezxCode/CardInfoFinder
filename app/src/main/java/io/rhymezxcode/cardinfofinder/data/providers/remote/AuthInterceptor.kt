@@ -1,6 +1,6 @@
 package io.rhymezxcode.cardinfofinder.data.providers.remote
 
-import android.app.Activity
+import android.content.Context
 import io.rhymezxcode.cardinfofinder.util.Constants
 import io.rhymezxcode.cardinfofinder.util.Constants.BAD_REQUEST
 import io.rhymezxcode.cardinfofinder.util.Constants.HTTP_UNAUTHORIZED
@@ -8,13 +8,13 @@ import io.rhymezxcode.cardinfofinder.util.Constants.NOT_FOUND
 import io.rhymezxcode.cardinfofinder.util.Constants.SERVER_ERROR
 import io.rhymezxcode.cardinfofinder.util.Constants.SUCCESS
 import io.rhymezxcode.cardinfofinder.util.Constants.TOO_MANY_REQUEST
-import io.rhymezxcode.cardinfofinder.util.showSnack
+import io.rhymezxcode.cardinfofinder.util.showToast
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
-    private val activity: Activity
+    val context: Context
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -26,13 +26,13 @@ class AuthInterceptor @Inject constructor(
         val response: Response = chain.proceed(request)
 
         when {
-            response.isNotFound() -> activity.showSnack(Constants.NOT_FOUND_MESSAGE)
-            response.isServerError() -> activity.showSnack(Constants.SERVER_ERROR_MESSAGE)
-            response.isUnAuthorised() -> activity.showSnack(Constants.UNAUTHORISED_MESSAGE)
-            response.isTooManyRequest() -> activity.showSnack(Constants.TOO_MANY_REQUEST_MESSAGE)
-            response.isBadRequest() -> activity.showSnack(Constants.BAD_REQUEST_MESSAGE)
-            response.isSuccessful() -> activity.showSnack(Constants.FETCHED_MESSAGE)
-            else -> activity.showSnack()
+            response.isNotFound() -> context.showToast(Constants.NOT_FOUND_MESSAGE)
+            response.isServerError() -> context.showToast(Constants.SERVER_ERROR_MESSAGE)
+            response.isUnAuthorised() -> context.showToast(Constants.UNAUTHORISED_MESSAGE)
+            response.isTooManyRequest() -> context.showToast(Constants.TOO_MANY_REQUEST_MESSAGE)
+            response.isBadRequest() -> context.showToast(Constants.BAD_REQUEST_MESSAGE)
+            response.isSuccessful() -> context.showToast(Constants.FETCHED_MESSAGE)
+            else -> context.showToast()
         }
 
         return response

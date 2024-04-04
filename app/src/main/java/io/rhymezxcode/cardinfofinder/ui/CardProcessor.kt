@@ -65,53 +65,58 @@ class CardProcessor : BaseActivity<ActivityCardProcessorBinding>(), View.OnClick
     }
 
     private fun getInformation() {
+        // Ensure that you're accessing the lifecycleScope from the Fragment or Activity
         lifecycleScope.launch {
             fetchCardInformationViewModel.fetchInfoNow(
                 cardNumber = cardForm?.cardNumber ?: ""
             )
         }
 
-        fetchCardInformationViewModel.getResponse.observe(
-            this
-        ) { event ->
-            event.getContentIfNotHandled()?.let { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        dismissLoader()
+        // Collect the Flow inside the lifecycleScope
+        lifecycleScope.launch {
+            fetchCardInformationViewModel.getResponse.collect { event ->
+                event.getContentIfNotHandled()?.let { response ->
+                    when (response) {
+                        is Resource.Success -> {
+                            dismissLoader()
 
-                        response.data?.let {
-                            if (!it.bank?.name.isNullOrEmpty()) {
-                                bundle.putString("brand", it.brand)
-                                bundle.putString("type", it.type)
-                                bundle.putString("bank_name", it.bank?.name)
-                                bundle.putString("country_name", it.country?.name)
+                            response.data?.let {
+                                if (!it.bank?.name.isNullOrEmpty()) {
+                                    bundle.putString("brand", it.brand)
+                                    bundle.putString("type", it.type)
+                                    bundle.putString("bank_name", it.bank?.name)
+                                    bundle.putString("country_name", it.country?.name)
 
-                                launchActivity(
-                                    CardInformationDisplay()
-                                        .getCardInformationDisplayActivityIntent(this)
-                                        .putExtras(bundle), finish = false
-                                )
-                            } else {
-                                this.showSnack(Constants.NO_AVAILABLE_MESSAGE)
+                                    launchActivity(
+                                        CardInformationDisplay()
+                                            .getCardInformationDisplayActivityIntent(
+                                                this@CardProcessor
+                                            )
+                                            .putExtras(bundle), finish = false
+                                    )
+                                } else {
+                                    this@CardProcessor.showSnack(Constants.NO_AVAILABLE_MESSAGE)
+                                }
                             }
                         }
-                    }
 
-                    is Resource.Error -> {
-                        dismissLoader()
+                        is Resource.Error -> {
+                            dismissLoader()
 
-                        response.message?.let { message ->
-                            showToast(message)
+                            response.message?.let { message ->
+                                showToast(message)
+                            }
                         }
-                    }
 
-                    is Resource.Loading -> {
-                        showLoader()
+                        is Resource.Loading -> {
+                            showLoader()
+                        }
+
+                        is Resource.Empty -> {}
                     }
                 }
             }
         }
-
     }
 
 
