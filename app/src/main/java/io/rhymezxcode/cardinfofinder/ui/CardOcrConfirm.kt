@@ -5,18 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.rhymezxcode.networkstateobserver.network.CheckConnectivity
 import io.rhymezxcode.cardinfofinder.R
 import io.rhymezxcode.cardinfofinder.databinding.ActivityOcrConfirmBinding
+import io.rhymezxcode.cardinfofinder.ui.base.BaseActivity
 import io.rhymezxcode.cardinfofinder.ui.viewModel.FetchCardInformationViewModel
 import io.rhymezxcode.cardinfofinder.util.Constants
 import io.rhymezxcode.cardinfofinder.util.Constants.CARD_DIGITS_REQUIRED_MESSAGE
 import io.rhymezxcode.cardinfofinder.util.Constants.NO_INTERNET_CONNECTION_MESSAGE
 import io.rhymezxcode.cardinfofinder.util.Resource
-import io.rhymezxcode.cardinfofinder.util.configureBackPress
 import io.rhymezxcode.cardinfofinder.util.dismissLoader
 import io.rhymezxcode.cardinfofinder.util.launchActivity
 import io.rhymezxcode.cardinfofinder.util.showLoader
@@ -25,23 +24,22 @@ import io.rhymezxcode.cardinfofinder.util.showToast
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class OcrConfirm : AppCompatActivity(), View.OnClickListener {
-    private var binding: ActivityOcrConfirmBinding? = null
+class CardOcrConfirm : BaseActivity<ActivityOcrConfirmBinding>(), View.OnClickListener {
 
-    //all variables
+    //bundle
     private var bundle: Bundle = Bundle()
+
+    //card number
     private var cardNumber: String? = null
+
+    //viewModel
     private val fetchCardInformationViewModel: FetchCardInformationViewModel by viewModels()
 
-    fun getOcrConfirmActivityIntent(context: Context?): Intent {
-        return Intent(context, OcrConfirm::class.java)
-    }
+    fun getOcrConfirmActivityIntent(context: Context?) = Intent(context, CardOcrConfirm::class.java)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityOcrConfirmBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+    override fun getViewBinding() = ActivityOcrConfirmBinding.inflate(layoutInflater)
 
+    override fun setViews() {
         val bundle = intent.extras
 
         if (bundle != null)
@@ -52,8 +50,6 @@ class OcrConfirm : AppCompatActivity(), View.OnClickListener {
 
         binding?.back?.setOnClickListener(this)
         binding?.proceed?.setOnClickListener(this)
-
-        configureBackPress()
     }
 
     override fun onClick(v: View?) {
@@ -107,7 +103,7 @@ class OcrConfirm : AppCompatActivity(), View.OnClickListener {
             event.getContentIfNotHandled()?.let { response ->
                 when (response) {
                     is Resource.Success -> {
-                        showLoader()
+                        dismissLoader()
 
                         response.data?.let {
                             if (!it.bank?.name.isNullOrEmpty()) {

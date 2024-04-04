@@ -6,60 +6,50 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 import io.rhymezxcode.cardinfofinder.R
 import io.rhymezxcode.cardinfofinder.databinding.ActivityCardOptionSelectionBinding
-import io.rhymezxcode.cardinfofinder.util.configureBackPress
+import io.rhymezxcode.cardinfofinder.ui.base.BaseActivity
 import io.rhymezxcode.cardinfofinder.util.launchActivity
+import io.rhymezxcode.cardinfofinder.util.showSnack
 import lens24.intent.Card
 import lens24.intent.ScanCardCallback
 import lens24.intent.ScanCardIntent
 
 @AndroidEntryPoint
-class CardOptionSelection : AppCompatActivity(), View.OnClickListener {
-    private lateinit var binding: ActivityCardOptionSelectionBinding
-    private var backPass: Long? = 0
-    private lateinit var snack: Snackbar
-
-    //bundle data
-    private var bundle: Bundle = Bundle()
-
+class CardOptionSelection : BaseActivity<ActivityCardOptionSelectionBinding>(),
+    View.OnClickListener {
 
     private var activityResultCallback = ScanCardCallback.Builder()
         .setOnSuccess { card: Card, _: Bitmap? -> setCard(card) }
         .setOnError {
-            Snackbar.make(
-                findViewById(android.R.id.content),
-                "Something went wrong!",
-                Snackbar.LENGTH_LONG
-            ).show()
+            this.showSnack()
         }
         .build()
+
     private var startActivityIntent = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult(),
         activityResultCallback
     )
 
-    fun getCardOptionSelectionActivityIntent(context: Context?): Intent {
-        return Intent(context, CardOptionSelection::class.java)
-    }
+    fun getCardOptionSelectionActivityIntent(context: Context?) =
+        Intent(context, CardOptionSelection::class.java)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityCardOptionSelectionBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        binding.cardNumber.setOnClickListener(this)
-        binding.cardOcr.setOnClickListener(this)
+    override fun getViewBinding() = ActivityCardOptionSelectionBinding.inflate(layoutInflater)
 
-        configureBackPress()
+    override fun setViews() {
+        installSplashScreen()
+        binding?.cardNumber?.setOnClickListener(this)
+        binding?.cardOcr?.setOnClickListener(this)
     }
 
     private fun setCard(card: Card) {
-        bundle.putString("cardNumber", card.cardNumber)
+        val bundle = intent.extras
+        bundle?.putString("cardNumber", card.cardNumber)
         launchActivity(
-            intent = OcrConfirm().getOcrConfirmActivityIntent(this).putExtras(bundle),
+            intent = CardOcrConfirm().getOcrConfirmActivityIntent(this)
+                .putExtras(bundle ?: Bundle()),
             finish = false
         )
     }

@@ -5,17 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.braintreepayments.cardform.view.CardForm
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.rhymezxcode.networkstateobserver.network.CheckConnectivity
 import io.rhymezxcode.cardinfofinder.R
 import io.rhymezxcode.cardinfofinder.databinding.ActivityCardProcessorBinding
+import io.rhymezxcode.cardinfofinder.ui.base.BaseActivity
 import io.rhymezxcode.cardinfofinder.ui.viewModel.FetchCardInformationViewModel
 import io.rhymezxcode.cardinfofinder.util.Constants
 import io.rhymezxcode.cardinfofinder.util.Resource
-import io.rhymezxcode.cardinfofinder.util.configureBackPress
 import io.rhymezxcode.cardinfofinder.util.dismissLoader
 import io.rhymezxcode.cardinfofinder.util.launchActivity
 import io.rhymezxcode.cardinfofinder.util.showLoader
@@ -24,8 +23,7 @@ import io.rhymezxcode.cardinfofinder.util.showToast
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CardProcessor : AppCompatActivity(), View.OnClickListener {
-    private var binding: ActivityCardProcessorBinding? = null
+class CardProcessor : BaseActivity<ActivityCardProcessorBinding>(), View.OnClickListener {
 
     //card form layout
     private var cardForm: CardForm? = null
@@ -33,28 +31,19 @@ class CardProcessor : AppCompatActivity(), View.OnClickListener {
     //bundle data
     private var bundle: Bundle = Bundle()
 
+    //viewModel
     private val fetchCardInformationViewModel: FetchCardInformationViewModel by viewModels()
-    
-    fun getCardProcessorActivityIntent(context: Context?): Intent {
-        return Intent(context, CardProcessor::class.java)
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        binding = null
-    }
+    fun getCardProcessorActivityIntent(context: Context?) =
+        Intent(context, CardProcessor::class.java)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityCardProcessorBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+    override fun getViewBinding() = ActivityCardProcessorBinding.inflate(layoutInflater)
 
+    override fun setViews() {
         cardForm = binding?.card
         cardForm?.cardRequired(true)?.setup(this)
         binding?.back?.setOnClickListener(this)
         binding?.proceed?.setOnClickListener(this)
-
-        configureBackPress()
     }
 
     private fun validate() {
@@ -88,7 +77,7 @@ class CardProcessor : AppCompatActivity(), View.OnClickListener {
             event.getContentIfNotHandled()?.let { response ->
                 when (response) {
                     is Resource.Success -> {
-                        showLoader()
+                        dismissLoader()
 
                         response.data?.let {
                             if (!it.bank?.name.isNullOrEmpty()) {
