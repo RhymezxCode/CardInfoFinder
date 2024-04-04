@@ -66,6 +66,7 @@ dependencies {
 
     //Retrofit
     implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
     //Okhttp
     implementation(libs.okhttp)
@@ -74,7 +75,7 @@ dependencies {
     //Gson
     implementation(libs.gson)
 
-    //Network state observer
+    //Network state observer to check Network state in Real-time
     implementation(libs.network.state.observer)
 
     //Livedata
@@ -85,4 +86,13 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    //brain tree payments Card form
+    implementation(libs.card.form)
+
+    //Len24 for OCR
+    implementation(libs.lens24)
+
+    //SplashScreen
+    implementation(libs.androidx.core.splashscreen)
 }
