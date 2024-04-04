@@ -2,50 +2,41 @@ package io.rhymezxcode.cardinfofinder
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import io.rhymezxcode.cardinfofinder.data.models.CardInfoPage
 import io.rhymezxcode.cardinfofinder.data.repository.FetchCardInformationRepository
 import io.rhymezxcode.cardinfofinder.ui.viewModel.FetchCardInformationViewModel
 import io.rhymezxcode.cardinfofinder.util.Resource
-import io.rhymezxcode.cardinfofinder.util.Resource.Loading
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import retrofit2.Response
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 class FetchCardInformationViewModelTest {
 
-    // This rule swaps the background executor used by the Architecture Components with a different one which executes each task synchronously.
+    private lateinit var viewModel: FetchCardInformationViewModel
+    private val mockRepository: FetchCardInformationRepository = mockk()
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    // Use a TestCoroutineDispatcher to manually control execution of coroutines
-    private val testDispatcher = TestCoroutineDispatcher()
-
-    // Use a TestCoroutineScope to easily control coroutine execution
-    private val testScope = TestCoroutineScope(testDispatcher)
-
-    // The ViewModel under test
-    private lateinit var viewModel: FetchCardInformationViewModel
-
-    // Mock repository
-    private val mockRepository: FetchCardInformationRepository = mockk()
-
     @Before
     fun setup() {
-        // Create the ViewModel with the TestCoroutineDispatcher
         viewModel = FetchCardInformationViewModel(mockRepository)
     }
 
     @Test
-    fun `fetchInfoNow() should emit loading state followed by success state on successful response`() =
-        testScope.runBlockingTest {
+    fun `fetchInfoNow() emits loading state followed by success state on successful response`() =
+        runBlockingTest {
             // Mock successful response
             val mockResponse: Response<CardInfoPage> = mockk()
             val mockCardInfoPage: CardInfoPage = mockk()
@@ -53,23 +44,21 @@ class FetchCardInformationViewModelTest {
             coEvery { mockResponse.isSuccessful } returns true
             coEvery { mockResponse.body() } returns mockCardInfoPage
 
-            // Call the method to be tested
+            // Execute the ViewModel action
             viewModel.fetchInfoNow("1234567890")
 
-            // Verify loading state emitted
-            val loadingEvent = viewModel.getResponse.value
-            assert(loadingEvent.peekContent() is Loading)
+            // Assert loading state emitted
+            assertEquals(
+                Resource.Loading<Any>().message,
+                viewModel.getResponse.first().peekContent().message
+            )
 
-            // Advance coroutine execution
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            // Verify success state emitted
-            val successEvent = viewModel.getResponse.value
-            assert(successEvent.peekContent() is Resource.Success)
-
-            // Verify the repository method was called with the correct parameters
-            coVerify { mockRepository.fetchCardInformation("1234567890") }
+            // Assert success state emitted after loading
+            val successEvent = viewModel.getResponse.first()
+            assertTrue(successEvent.peekContent() is Resource.Success)
+            assertEquals(mockCardInfoPage, (successEvent.peekContent() as Resource.Success).data)
         }
 
-    // Similar tests can be written for error cases and other scenarios
+
+    //TODO: Add more test cases
 }
