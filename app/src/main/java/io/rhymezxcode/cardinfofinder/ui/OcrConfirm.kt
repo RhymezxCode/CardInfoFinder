@@ -1,0 +1,149 @@
+package io.rhymezxcode.cardinfofinder.ui
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.rhymezxcode.networkstateobserver.network.CheckConnectivity
+import io.rhymezxcode.cardinfofinder.R
+import io.rhymezxcode.cardinfofinder.databinding.ActivityOcrConfirmBinding
+import io.rhymezxcode.cardinfofinder.ui.viewModel.FetchCardInformationViewModel
+import io.rhymezxcode.cardinfofinder.util.Constants
+import io.rhymezxcode.cardinfofinder.util.Constants.CARD_DIGITS_REQUIRED_MESSAGE
+import io.rhymezxcode.cardinfofinder.util.Constants.NO_INTERNET_CONNECTION_MESSAGE
+import io.rhymezxcode.cardinfofinder.util.Resource
+import io.rhymezxcode.cardinfofinder.util.configureBackPress
+import io.rhymezxcode.cardinfofinder.util.dismissLoader
+import io.rhymezxcode.cardinfofinder.util.launchActivity
+import io.rhymezxcode.cardinfofinder.util.showLoader
+import io.rhymezxcode.cardinfofinder.util.showSnack
+import io.rhymezxcode.cardinfofinder.util.showToast
+import kotlinx.coroutines.launch
+
+@AndroidEntryPoint
+class OcrConfirm : AppCompatActivity(), View.OnClickListener {
+    private var binding: ActivityOcrConfirmBinding? = null
+
+    //all variables
+    private var bundle: Bundle = Bundle()
+    private var cardNumber: String? = null
+    private val fetchCardInformationViewModel: FetchCardInformationViewModel by viewModels()
+
+    fun getOcrConfirmActivityIntent(context: Context?): Intent {
+        return Intent(context, OcrConfirm::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityOcrConfirmBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+
+        val bundle = intent.extras
+
+        if (bundle != null)
+            binding?.card?.text = bundle.getString("cardNumber")
+
+        cardNumber = bundle?.getString("cardNumber").toString()
+            .replace(" ", "").trim()
+
+        binding?.back?.setOnClickListener(this)
+        binding?.proceed?.setOnClickListener(this)
+
+        configureBackPress()
+    }
+
+    override fun onClick(v: View?) {
+        if (v != null) {
+            when (v.id) {
+                R.id.proceed -> {
+                    when {
+                        CheckConnectivity.isNetworkAvailable(this) -> {
+                            validate()
+                        }
+
+                        else -> {
+                            this.showSnack(NO_INTERNET_CONNECTION_MESSAGE)
+                        }
+                    }
+                }
+
+                R.id.back -> finish()
+            }
+        }
+    }
+
+    private fun validate() {
+        when {
+            cardNumber?.isNotEmpty() == true -> {
+                if ((cardNumber?.length ?: 0) < 8) {
+                    this.showSnack(CARD_DIGITS_REQUIRED_MESSAGE)
+                } else {
+                    cardNumber?.substring(0, 7)?.let {
+                        getInformation()
+                    }
+                }
+            }
+
+            else -> {
+                this.showSnack(CARD_DIGITS_REQUIRED_MESSAGE)
+            }
+        }
+    }
+
+    private fun getInformation() {
+        lifecycleScope.launch {
+            fetchCardInformationViewModel.fetchInfoNow(
+                cardNumber = cardNumber ?: ""
+            )
+        }
+
+        fetchCardInformationViewModel.getResponse.observe(
+            this
+        ) { event ->
+            event.getContentIfNotHandled()?.let { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        showLoader()
+
+                        response.data?.let {
+                            if (!it.bank?.name.isNullOrEmpty()) {
+                                bundle.putString("brand", it.brand)
+                                bundle.putString("type", it.type)
+                                bundle.putString("bank_name", it.bank?.name)
+                                bundle.putString("country_name", it.country?.name)
+
+                                launchActivity(
+                                    CardInformationDisplay()
+                                        .getCardInformationDisplayActivityIntent(this)
+                                        .putExtras(bundle), finish = false
+                                )
+                            } else {
+                                this.showSnack(Constants.NO_AVAILABLE_MESSAGE)
+                            }
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        dismissLoader()
+
+                        response.message?.let { message ->
+                            showToast(message)
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        showLoader()
+                    }
+                }
+            }
+        }
+
+    }
+
+}
+
+
