@@ -53,7 +53,7 @@ class CardProcessor : BaseActivity<ActivityCardProcessorBinding>(), View.OnClick
                     this.showSnack(Constants.CARD_DIGITS_REQUIRED_MESSAGE)
                 } else {
                     cardForm?.cardNumber?.substring(0, 7)?.let {
-                        getInformation()
+                        getInformation(it)
                     }
                 }
             }
@@ -64,11 +64,11 @@ class CardProcessor : BaseActivity<ActivityCardProcessorBinding>(), View.OnClick
         }
     }
 
-    private fun getInformation() {
+    private fun getInformation(cardNumber: String) {
         // Ensure that you're accessing the lifecycleScope from the Fragment or Activity
         lifecycleScope.launch {
             fetchCardInformationViewModel.fetchInfoNow(
-                cardNumber = cardForm?.cardNumber ?: ""
+                cardNumber = cardNumber
             )
         }
 
