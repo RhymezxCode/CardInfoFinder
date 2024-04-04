@@ -79,7 +79,7 @@ class CardOcrConfirm : BaseActivity<ActivityOcrConfirmBinding>(), View.OnClickLi
                     this.showSnack(CARD_DIGITS_REQUIRED_MESSAGE)
                 } else {
                     cardNumber?.substring(0, 7)?.let {
-                        getInformation()
+                        getInformation(it)
                     }
                 }
             }
@@ -90,11 +90,11 @@ class CardOcrConfirm : BaseActivity<ActivityOcrConfirmBinding>(), View.OnClickLi
         }
     }
 
-    private fun getInformation() {
+    private fun getInformation(cardNumber: String) {
         // Ensure that you're accessing the lifecycleScope from the Fragment or Activity
         lifecycleScope.launch {
             fetchCardInformationViewModel.fetchInfoNow(
-                cardNumber = cardNumber ?: ""
+                cardNumber = cardNumber
             )
         }
 
