@@ -110,4 +110,4 @@ Extension.kt: Contains extension functions.
 NetworkManager.kt: Manages network-state related tasks.
 Resource.kt: Defines resource handling mechanisms.
 
-# Note: This is just a basic app, and it can still be improved
+# Note: This is just a basic app, and it can still be improved using jetpack compose and more latest stuffs
