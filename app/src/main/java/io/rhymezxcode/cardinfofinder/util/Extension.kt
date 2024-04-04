@@ -16,10 +16,10 @@ private var alertDialog: AlertDialog? = null
 private lateinit var snack: Snackbar
 private var backPass: Long? = 0
 
-fun Activity.showSnack(info: String? = "Something went wrong!") {
+fun Activity.showSnack(info: String? = Constants.SOMETHING_IS_WRONG) {
     Snackbar.make(
         this.findViewById(android.R.id.content),
-        info ?: "",
+        "$info",
         Snackbar.LENGTH_LONG
     ).show()
 }
@@ -46,7 +46,7 @@ fun Activity.launchActivity(intent: Intent?, finish: Boolean) {
 
 
 //For Toast
-fun Context.showToast(message: String?) {
+fun Context.showToast(message: String? = Constants.SOMETHING_IS_WRONG) {
     Toast.makeText(this, message, Toast.LENGTH_LONG)
         .show()
 }

@@ -5,3 +5,5 @@ plugins {
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.dagger.hilt) apply false
 }
+
+

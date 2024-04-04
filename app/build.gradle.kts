@@ -2,12 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    id("com.google.dagger.hilt.android")
 }
 
 android {
     namespace = "io.rhymezxcode.cardinfofinder"
     compileSdk = 34
-
+    ndkVersion = "26.1.10909125"
     defaultConfig {
         applicationId = "io.rhymezxcode.cardinfofinder"
         minSdk = 24
@@ -19,6 +20,7 @@ android {
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
         multiDexEnabled = true
+
     }
 
     buildTypes {
@@ -46,6 +48,10 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    hilt {
+        enableAggregatingTask = true
+        enableExperimentalClasspathAggregation = true
+    }
 }
 
 dependencies {
@@ -60,9 +66,20 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.activity.ktx)
 
+    // AndroidX Test Core (for InstantTaskExecutorRule)
+    testImplementation(libs.core.testing)
+
+    // Mockito
+    testImplementation(libs.mockito.core)
+
+    // MockK
+    testImplementation(libs.mockk)
+
     //Coroutines
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
+    // Kotlin Coroutines Test
+    testImplementation(libs.kotlinx.coroutines.test)
 
     //Retrofit
     implementation(libs.retrofit)
@@ -86,6 +103,13 @@ dependencies {
     //Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    // For instrumentation tests
+    androidTestImplementation(libs.google.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+    // For local unit tests
+    testImplementation(libs.google.hilt.android.testing)
+    kspTest(libs.hilt.compiler)
+
 
     //brain tree payments Card form
     implementation(libs.card.form)

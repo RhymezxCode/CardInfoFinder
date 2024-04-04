@@ -1,14 +1,15 @@
 package io.rhymezxcode.cardinfofinder.ui.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.rhymezxcode.cardinfofinder.data.models.CardInfoPage
 import io.rhymezxcode.cardinfofinder.data.repository.FetchCardInformationRepository
+import io.rhymezxcode.cardinfofinder.util.Constants
 import io.rhymezxcode.cardinfofinder.util.Event
 import io.rhymezxcode.cardinfofinder.util.Resource
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
@@ -20,10 +21,9 @@ class FetchCardInformationViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _getResponse =
-        MutableLiveData<Event<Resource<CardInfoPage>>>()
-    val getResponse: LiveData<Event<Resource<CardInfoPage>>> =
+        MutableStateFlow<Event<Resource<CardInfoPage>>>(Event(Resource.Empty()))
+    val getResponse: StateFlow<Event<Resource<CardInfoPage>>> =
         _getResponse
-
 
     fun fetchInfoNow(
         cardNumber: String
@@ -34,46 +34,33 @@ class FetchCardInformationViewModel @Inject constructor(
     private suspend fun fetchCardInfo(
         cardNumber: String
     ) {
-        _getResponse.postValue(Event(Resource.Loading()))
+        _getResponse.value = Event(Resource.Loading())
         try {
-
             val response = repo.fetchCardInformation(cardNumber)
-            _getResponse.postValue(handleResponse(response))
-
+            _getResponse.value = handleResponse(response)
         } catch (t: Throwable) {
             when (t) {
                 is IOException -> {
-                    _getResponse.postValue(
-                        Event(
-                            Resource.Error(
-                                "Network Failure"
-                            )
-                        )
-                    )
+                    _getResponse.value = Event(Resource.Error(Constants.NETWORK_FAILURE))
                 }
 
                 else -> {
-                    _getResponse.postValue(
-                        Event(
-                            Resource.Error(
-                                t.localizedMessage ?: ""
-                            )
-                        )
-                    )
+                    _getResponse.value = Event(Resource.Error(t.localizedMessage ?: ""))
                 }
             }
         }
     }
 
-    private fun handleResponse(response: Response<CardInfoPage>):
-            Event<Resource<CardInfoPage>> {
-        if (response.isSuccessful) {
-            Resource.Success(response)
+    private fun handleResponse(response: Response<CardInfoPage>): Event<Resource<CardInfoPage>> {
+        return if (response.isSuccessful) {
+            val data = response.body()
+            if (data != null) {
+                Event(Resource.Success(data))
+            } else {
+                Event(Resource.Error(Constants.NULL_RESPONSE))
+            }
+        } else {
+            Event(Resource.Error(Constants.SOMETHING_IS_WRONG))
         }
-        return when {
-            else -> Event(Resource.Error("Something went wrong!"))
-        }
-
-
     }
 }
